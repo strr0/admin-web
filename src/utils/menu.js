@@ -4,12 +4,19 @@ export const initMenu = (router, store) => {
   if(store.state.routes.length > 0) {
     return  
   }
-  if(store.state.user) {
-    getRequest('/api/admin/sysAuthority/userMenuTree').then(resp => {
+  if(store.state.token) {
+    let token = {
+      'key': 'bearer',
+      'value': store.state.token
+    }
+    getRequest('/api/admin/sysAuthority/userMenuTree', token).then(resp => {
       if(resp && resp.success) {
-        var routes = []
-        var menuTree = buildMenuTree(resp.data, routes)
-        var home = {
+        let user = resp.data.user
+        let menus = resp.data.menus
+        store.commit('login', user);
+        let routes = []
+        let menuTree = buildMenuTree(menus, routes)
+        let home = {
           path: '/home',
           name: 'home',
           component: resolve => require(['@/views/home/index.vue'], resolve),
@@ -23,7 +30,7 @@ export const initMenu = (router, store) => {
 }
 
 export const buildMenuTree = (menus, routes) => {
-  var tree = []
+  let tree = []
   menus.forEach(menu => {
     tree.push(buildMenuNode(menu, routes))
   })
@@ -31,8 +38,8 @@ export const buildMenuTree = (menus, routes) => {
 }
 
 export const buildMenuNode = (menu, routes) => {
-  var children = []
-  var others = []
+  let children = []
+  let others = []
   if (menu.children && menu.children instanceof Array) {
     menu.children.forEach(child => {
       // 是否菜单
@@ -43,7 +50,7 @@ export const buildMenuNode = (menu, routes) => {
       }
     })
   }
-  var node = {
+  let node = {
     path: menu.path,
     name: menu.name,
     iconCls: menu.icon,

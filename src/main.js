@@ -26,7 +26,7 @@ router.beforeEach((to, from, next) => {
     next()
   }
   else {
-    if(store.state.user) {
+    if(store.state.token) {
       initMenu(router, store)
     }
     next()

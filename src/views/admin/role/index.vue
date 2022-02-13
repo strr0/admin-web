@@ -104,6 +104,14 @@
         }
       }
     },
+    computed: {
+      token() {
+        return {
+          'key': 'bearer',
+          'value': this.$store.state.token
+        }
+      }
+    },
     mounted() {
       this.initBtn()
       this.initRole()
@@ -126,7 +134,7 @@
       initRole() {
         this.loading = true
         let url = '/api/admin/sysRole/page?page=' + this.page + '&size=' + this.size
-        this.getRequest(url).then(resp => {
+        this.getRequest(url, this.token).then(resp => {
           this.loading = false
           if(resp) {
             this.roleList = resp.content
@@ -135,7 +143,7 @@
         })
       },
       initAuthority() {
-        this.getRequest('/api/admin/sysAuthority/menuTree')
+        this.getRequest('/api/admin/sysAuthority/menuTree', this.token)
         .then(resp => {
           if(resp && resp.success) {
             this.authorityList = resp.data
@@ -155,7 +163,7 @@
         this.$refs.role.validate(valid => {
           if(valid) {
             if (this.role.id) {
-              this.putRequest('/api/admin/sysRole/update', this.role).then(resp => {
+              this.putRequest('/api/admin/sysRole/update', this.role, this.token).then(resp => {
                 if(resp && resp.success) {
                   this.$message({
                     message: '修改成功',
@@ -166,7 +174,7 @@
                 }
               })
             } else {
-              this.postRequest('/api/admin/sysRole/save', this.role).then(resp => {
+              this.postRequest('/api/admin/sysRole/save', this.role, this.token).then(resp => {
                 if(resp && resp.success) {
                   this.$message({
                     message: '保存成功',
@@ -192,7 +200,7 @@
         this.title = '权限控制'
         this.role = this.currentRow
         this.treeData = []
-        this.getRequest('/api/admin/sysRole/listRelByRid?rid=' + this.role.id).then(resp => {
+        this.getRequest('/api/admin/sysRole/listRelByRid?rid=' + this.role.id, this.token).then(resp => {
           if (resp && resp.success) {
             this.treeData = this.authorityList
             this.newAids = resp.data
@@ -234,7 +242,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.deleteRequest('/api/admin/sysRole/removeInfo?id=' + this.currentRow.id).then((resp) => {
+          this.deleteRequest('/api/admin/sysRole/removeInfo?id=' + this.currentRow.id, this.token).then((resp) => {
             if (resp) {
               this.$message({
                 message: '删除成功',
@@ -259,7 +267,7 @@
         form.rid = this.role.id
         form.oldAids = this.oldAids
         form.newAids = halfChecked.concat(checked)
-        this.postRequest('/api/admin/sysRole/updateRel', form).then(resp => {
+        this.postRequest('/api/admin/sysRole/updateRel', form, this.token).then(resp => {
           if(resp && resp.success) {
             this.$message({
               message: '修改成功',

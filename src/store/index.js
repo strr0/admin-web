@@ -5,16 +5,27 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: null,
+    token: null,
+    user: {
+      username: 'unknown',
+      nickname: '未登录'
+    },
     routes: [],
     others: []
   },
   mutations: {
+    token(state, token) {
+      state.token = token
+    },
     login(state, user) {
       state.user = user
     },
     logout(state) {
-      state.user = null
+      state.token = null
+      state.user = {
+        username: 'unknown',
+        nickname: '未登录'
+      }
       state.routes = []
     },
     initMenu(state, data) {

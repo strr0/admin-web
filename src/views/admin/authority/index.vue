@@ -173,6 +173,14 @@
         }
       }
     },
+    computed: {
+      token() {
+        return {
+          'key': 'bearer',
+          'value': this.$store.state.token
+        }
+      }
+    },
     mounted() {
       this.initBtn()
       this.initAuthority()
@@ -189,7 +197,7 @@
       },
       initAuthority() {
         this.loading = true
-        this.getRequest('/api/admin/sysAuthority/menuTree').then(resp => {
+        this.getRequest('/api/admin/sysAuthority/menuTree', this.token).then(resp => {
           this.loading = false
           if(resp && resp.success) {
             this.authorityList = resp.data
@@ -215,7 +223,7 @@
             let form = this.authority
             delete form.children
             if (form.id) {
-              this.putRequest('/api/admin/sysAuthority/update', this.authority).then(resp => {
+              this.putRequest('/api/admin/sysAuthority/update', this.authority, this.token).then(resp => {
                 if(resp && resp.success) {
                   this.$message({
                     message: '修改成功',
@@ -226,7 +234,7 @@
                 }
               })
             } else {
-              this.postRequest('/api/admin/sysAuthority/save', this.authority).then(resp => {
+              this.postRequest('/api/admin/sysAuthority/save', this.authority, this.token).then(resp => {
                 if(resp && resp.success) {
                   this.$message({
                     message: '保存成功',
@@ -300,7 +308,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.deleteRequest('/api/admin/sysAuthority/removeInfo?id=' + this.currentRow.id).then((resp) => {
+          this.deleteRequest('/api/admin/sysAuthority/removeInfo?id=' + this.currentRow.id, this.token).then((resp) => {
             if (resp && resp.success) {
               this.$message({
                 message: '删除成功',

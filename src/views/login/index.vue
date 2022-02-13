@@ -26,8 +26,14 @@ export default {
       //记住密码
       checked: false,
       loginForm: {
+        grant_type: 'password',
+        scope: 'web',
         username: 'admin',
         password: 'abc123'
+      },
+      basic: {
+        'key': 'Basic',
+        'value': 'U1RSUl9DTElFTlQ6U1RSUl9TRUNSRVQ='
       },
       loading: false,
     }
@@ -37,16 +43,16 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if(valid) {
           this.loading = true;
-          this.postRequest('/security/login', this.loginForm)
+          this.postRequest('/oauth/token', this.loginForm, this.basic)
           .then(resp => {
             this.loading = false;
-            if(resp && resp.success) {
+            if(resp && resp.access_token) {
               this.$message({
                 message: '登录成功',
                 type: 'success'
               })
-              this.$store.commit('login', resp.data)
-              var path = this.$route.query.redirect;
+              this.$store.commit('token', resp.access_token)
+              let path = this.$route.query.redirect;
               this.$router.replace((path == '/' || path == undefined) ? '/home' : path)
             }
             else {

@@ -18,42 +18,63 @@ axios.interceptors.response.use(
   }
 )
 
-export const getRequest = url => {
+export const getRequest = (url, token) => {
+  let _headers = {}
+  if (token) {
+    _headers = headers(token.key, token.value)
+  }
   return axios({
     method: 'GET',
-    url: url
+    url: url,
+    headers: _headers
   })
 }
 
-export const postRequest = (url, params) => {
+export const postRequest = (url, params, token) => {
+  let _headers = {}
+  if (token) {
+    _headers = headers(token.key, token.value)
+  }
   return axios({
     method: 'POST',
     url: url,
     data: params,
     transformRequest: [ transformRequest ],
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
+    headers: _headers
   })
 }
 
-export const putRequest = (url, params) => {
+export const putRequest = (url, params, token) => {
+  let _headers = {}
+  if (token) {
+    _headers = headers(token.key, token.value)
+  }
   return axios({
     method: 'PUT',
     url: url,
     data: params,
     transformRequest: [ transformRequest ],
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
+    headers: _headers
   })
 }
 
-export const deleteRequest = url => {
+export const deleteRequest = (url, token) => {
+  let _headers = {}
+  if (token) {
+    _headers = headers(token.key, token.value)
+  }
   return axios({
     method: 'DELETE',
     url: url,
+    headers: _headers
   })
+}
+
+const headers = (key, value) => {
+  return {
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Authorization': key + ' ' + value
+  }
 }
 
 const transformRequest = data => {
